@@ -1,6 +1,6 @@
 {
-  "name": "BlazorApp15",
-  "short_name": "BlazorApp15",
+  "name": "BillMeApp",
+  "short_name": "BillMeApp",
   "id": "./",
   "start_url": "./",
   "display": "standalone",
