@@ -4,53 +4,33 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    types: [opened, synchronize, reopened, closed]
-    branches:
-      - main
+  # Pull request events are removed to avoid extra staging environments
 
 jobs:
   build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
-      - name: 📥 Checkout Repository
+      - name: 📦 Checkout Code
         uses: actions/checkout@v3
         with:
           submodules: true
           lfs: false
 
-      - name: 🧰 Setup .NET 8
+      - name: 🔧 Setup .NET Core SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: '8.x'
 
-      - name: 🔧 Restore Dependencies
-        run: dotnet restore ./Client/Client.csproj
+      - name: 🛠️ Publish Blazor WASM App
+        run: dotnet publish ./Client/Client.csproj --configuration Release --output ./publish
 
-      - name: 🚀 Publish Blazor WebAssembly
-        run: dotnet publish ./Client/Client.csproj -c Release -o publish_output
-
-      - name: ☁️ Deploy to Azure Static Web Apps
-        id: builddeploy
+      - name: 🚀 Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ORANGE_WATER_0BADFAE10 }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }} # For PR comment integration
           action: "upload"
-          app_location: "publish_output/wwwroot"  # ✅ Use publish output
-          api_location: "Api"
-          output_location: ""
-
-  close_pull_request_job:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    runs-on: ubuntu-latest
-    name: Close Pull Request Job
-    steps:
-      - name: 🧹 Close Pull Request
-        id: closepullrequest
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ORANGE_WATER_0BADFAE10 }}
-          action: "close"
+          app_location: "./publish/wwwroot"     # Where published files are located
+          api_location: "Api"                   # Optional - skip or update if unused
+          output_location: ""                   # Not needed when using pre-built app
