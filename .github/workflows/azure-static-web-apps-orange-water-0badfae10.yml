@@ -26,7 +26,10 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Publish Blazor App
+      - name: Restore Dependencies
+        run: dotnet restore
+
+      - name: Publish Blazor WASM App
         run: |
           dotnet publish ./Client/Client.csproj -c Release -o build
 
@@ -36,9 +39,9 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ORANGE_WATER_0BADFAE10 }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: "."              
-          api_location: "Api"            
+          app_location: "./Client"
           output_location: "build/wwwroot"
+          api_location: "Api"  # Optional: change or remove if not using Azure Functions
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
