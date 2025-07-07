@@ -1,4 +1,7 @@
 {
+  "mimeTypes": {
+    ".br": "application/octet-stream"
+  },
   "navigationFallback": {
     "rewrite": "/index.html"
   }

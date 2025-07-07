@@ -13,6 +13,8 @@
     <StripDebugSymbols>true</StripDebugSymbols>
     <BlazorEnableTimeZoneSupport>false</BlazorEnableTimeZoneSupport>
     <BlazorWebAssemblyPreserveCollationData>false</BlazorWebAssemblyPreserveCollationData>
+    <BlazorEnableCompression>true</BlazorEnableCompression>
+    <PublishTrimmed>true</PublishTrimmed>
     <DebugType>none</DebugType>
   </PropertyGroup>
 
