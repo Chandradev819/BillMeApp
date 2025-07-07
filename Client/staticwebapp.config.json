@@ -1,12 +1,5 @@
 {
   "navigationFallback": {
-    "rewrite": "index.html"
-  },
-  "responseOverrides": {
-    "/_framework": {
-      "headers": {
-        "Content-Encoding": "br"
-      }
-    }
+    "rewrite": "/index.html"
   }
 }
