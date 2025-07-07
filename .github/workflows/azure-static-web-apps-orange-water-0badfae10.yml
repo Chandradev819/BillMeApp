@@ -16,40 +16,24 @@ jobs:
     name: Build and Deploy Job
     steps:
       - uses: actions/checkout@v3
-        with:
-          submodules: true
-          lfs: false
 
-      - name: Setup .NET
+      - name: Setup .NET SDK
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore ./Client/Client.csproj
 
       - name: Publish Blazor WebAssembly App
-        run: dotnet publish ./Client/Client.csproj -c Release
+        run: dotnet publish ./Client/Client.csproj -c Release -o build_output
 
-      - name: Build And Deploy
-        id: builddeploy
+      - name: Upload to Azure Static Web App
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ORANGE_WATER_0BADFAE10 }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for GitHub integrations (i.e. PR comments)
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: "./Client" # App source code path
-          api_location: "Api" # API source code path - optional
-          output_location: "Client/bin/Release/net8.0/publish/wwwroot" # ✅ Final output folder after publish
-
-  close_pull_request_job:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    runs-on: ubuntu-latest
-    name: Close Pull Request Job
-    steps:
-      - name: Close Pull Request
-        id: closepullrequest
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ORANGE_WATER_0BADFAE10 }}
-          action: "close"
+          app_location: "build_output/wwwroot" # ✅ Now matches the output from publish
+          api_location: "" # No API
+          output_location: "" # Not needed when using prebuilt path
