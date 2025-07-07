@@ -7,11 +7,12 @@
     <RootNamespace>BlazorApp.Client</RootNamespace>
 
     <!-- 🔧 Optimization Flags -->
-    <BlazorWebAssemblyEnableAOT>true</BlazorWebAssemblyEnableAOT>
+    <!--<BlazorWebAssemblyEnableAOT>true</BlazorWebAssemblyEnableAOT>-->
     <PublishTrimmed>true</PublishTrimmed>
     <InvariantGlobalization>true</InvariantGlobalization>
-    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
     <StripDebugSymbols>true</StripDebugSymbols>
+    <BlazorEnableTimeZoneSupport>false</BlazorEnableTimeZoneSupport>
+    <BlazorWebAssemblyPreserveCollationData>false</BlazorWebAssemblyPreserveCollationData>
     <DebugType>none</DebugType>
   </PropertyGroup>
 
