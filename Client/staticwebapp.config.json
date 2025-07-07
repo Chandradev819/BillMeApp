@@ -1,5 +1,9 @@
 {
+  "mimeTypes": {
+    ".br": "application/octet-stream"
+  },
   "navigationFallback": {
-    "rewrite": "/index.html"
+    "rewrite": "index.html",
+    "exclude": [ "/_framework/*", "/api/*" ]
   }
 }
