@@ -30,8 +30,7 @@ jobs:
         run: dotnet restore
 
       - name: Publish Blazor WASM App
-        run: |
-          dotnet publish ./Client/Client.csproj -c Release -o build
+        run: dotnet publish ./Client/Client.csproj -c Release
 
       - name: Deploy to Azure Static Web App
         uses: Azure/static-web-apps-deploy@v1
@@ -40,8 +39,8 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           app_location: "./Client"
-          output_location: "build/wwwroot"
-          api_location: "Api"  # Optional: change or remove if not using Azure Functions
+          output_location: "Client/bin/Release/net8.0/publish/wwwroot"
+          api_location: "Api"  # Optional — adjust/remove if not using API
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
