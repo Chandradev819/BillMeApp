@@ -3,7 +3,6 @@
     ".br": "application/octet-stream"
   },
   "navigationFallback": {
-    "rewrite": "index.html",
-    "exclude": [ "/_framework/*", "/api/*" ]
+    "rewrite": "/index.html"
   }
 }
