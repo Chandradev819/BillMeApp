@@ -4,36 +4,32 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    types: [opened, synchronize, reopened, closed]
-    branches:
-      - main
 
 jobs:
   build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
-    name: Build and Deploy Job
+    name: Build and Deploy Blazor WASM App
     steps:
-      - uses: actions/checkout@v3
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v3
 
-      - name: Setup .NET SDK
+      - name: 🧰 Setup .NET SDK
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.x'
 
-      - name: Restore dependencies
+      - name: 🔄 Restore Dependencies
         run: dotnet restore ./Client/Client.csproj
 
-      - name: Publish Blazor WebAssembly App
+      - name: 🚀 Publish Blazor WebAssembly App
         run: dotnet publish ./Client/Client.csproj -c Release -o build_output
 
-      - name: Upload to Azure Static Web App
+      - name: ☁️ Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ORANGE_WATER_0BADFAE10 }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: "build_output/wwwroot" # ✅ Now matches the output from publish
-          api_location: "" # No API
-          output_location: "" # Not needed when using prebuilt path
+          app_location: "build_output/wwwroot" # this is the actual output directory
+          api_location: ""
+          output_location: ""
