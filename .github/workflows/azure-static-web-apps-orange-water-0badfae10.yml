@@ -2,19 +2,22 @@ name: Azure Static Web Apps CI/CD
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
-    types: [ opened, synchronize, reopened, closed ]
-    branches: [ main ]
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - main
 
 jobs:
   build_and_deploy_job:
     if:  github.event_name == 'push' ||
          (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
+    name: Build and Deploy
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Setup .NET SDK
@@ -22,29 +25,39 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
+      - name: Cache NuGet packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: ${{ runner.os }}-nuget- 
+
       - name: Install WASM workload
         run: dotnet workload install wasm-tools
 
-      - name: Publish release build
+      - name: Publish Blazor release build
         run: dotnet publish Client -c Release
 
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
         with:
+          # Replace this with the name of your repo secret
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token:            ${{ secrets.GITHUB_TOKEN }}
           action:                upload
-
-          # ← point at the *published* wwwroot, not the source folder
-          app_location:          Client/bin/Release/net8.0/wwwroot  
+          # Point at your published output (contains all .br, .wasm, .dll)
+          app_location:          Client/bin/Release/net8.0/wwwroot
           api_location:          Api
-          output_location:       ''  
+          # No extra subfolder under the publish directory
+          output_location:       ''
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
+    name: Close PR Preview
+
     steps:
-      - name: Close Preview
+      - name: Close Static Web Apps Preview
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
