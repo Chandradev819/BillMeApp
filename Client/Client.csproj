@@ -8,20 +8,18 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
-    <!-- Optimization Flags Start -->
-    <BlazorWebAssemblyEnableAOT>true</BlazorWebAssemblyEnableAOT>
     <PublishTrimmed>true</PublishTrimmed>
+    <TrimMode>link</TrimMode>
+    <EnableAnalyzer>true</EnableAnalyzer>
+    <BlazorEnableLinkerAnalyzer>true</BlazorEnableLinkerAnalyzer>
     <InvariantGlobalization>true</InvariantGlobalization>
-    <StripDebugSymbols>true</StripDebugSymbols>
-    <BlazorEnableTimeZoneSupport>false</BlazorEnableTimeZoneSupport>
     <BlazorWebAssemblyPreserveCollationData>false</BlazorWebAssemblyPreserveCollationData>
     <BlazorWebAssemblyPreserveCultureData>false</BlazorWebAssemblyPreserveCultureData>
-    <TrimMode>partial</TrimMode>
-    <CompressionEnabled>true</CompressionEnabled>
+    <StripDebugSymbols>true</StripDebugSymbols>
     <DebugType>none</DebugType>
-    <!-- Optimization Flags End-->
+    <CompressionEnabled>true</CompressionEnabled>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.0" PrivateAssets="all" />
