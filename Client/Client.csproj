@@ -18,7 +18,6 @@
     <CompressionEnabled>true</CompressionEnabled>
     <DebugType>none</DebugType>
     <!-- Optimization Flags End-->
-    
   </PropertyGroup>
 
   <ItemGroup>
