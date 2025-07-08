@@ -6,14 +6,18 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>BlazorApp.Client</RootNamespace>
 
-    <!-- 🔧 Optimization Flags -->
+    <!-- Optimization Flags Start -->
     <!--<BlazorWebAssemblyEnableAOT>true</BlazorWebAssemblyEnableAOT>-->
     <PublishTrimmed>true</PublishTrimmed>
     <InvariantGlobalization>true</InvariantGlobalization>
     <StripDebugSymbols>true</StripDebugSymbols>
     <BlazorEnableTimeZoneSupport>false</BlazorEnableTimeZoneSupport>
     <BlazorWebAssemblyPreserveCollationData>false</BlazorWebAssemblyPreserveCollationData>
+    <BlazorWebAssemblyPreserveCultureData>false</BlazorWebAssemblyPreserveCultureData>
+    <TrimMode>partial</TrimMode>
+    <CompressionEnabled>true</CompressionEnabled>
     <DebugType>none</DebugType>
+    <!-- Optimization Flags End-->
   </PropertyGroup>
 
   <ItemGroup>
