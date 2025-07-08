@@ -15,12 +15,21 @@ jobs:
         (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     name: Build and Deploy Job
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           submodules: true
           lfs: false
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
 
       - name: Cache NuGet packages
         uses: actions/cache@v3
@@ -29,8 +38,21 @@ jobs:
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
           restore-keys: ${{ runner.os }}-nuget-
 
+      - name: Cache .NET workload packs
+        uses: actions/cache@v3
+        with:
+          path: ~/.dotnet
+          key: ${{ runner.os }}-dotnet-workloads-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-dotnet-workloads-
+
       - name: Install WASM Tools workload
         run: dotnet workload install wasm-tools
+
+      - name: Restore & Build API
+        run: |
+          dotnet restore Api/Api.csproj
+          dotnet publish Api/Api.csproj -c Release --output publish/api
 
       - name: Publish Blazor WebAssembly (AOT + Brotli)
         run: |
@@ -39,15 +61,28 @@ jobs:
             /p:RunAOTCompilation=true \
             /p:CompressionEnabled=true
 
+      - name: Diagnose WASM Output
+        run: |
+          echo "--- _framework files ---"
+          ls -lh Client/bin/Release/net8.0/publish/wwwroot/_framework
+          echo
+          echo "--- Config JSON ---"
+          ls -l Client/bin/Release/net8.0/publish/wwwroot/staticwebapp.config.json
+
       - name: Build And Deploy to Azure Static Web Apps
+        id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ORANGE_WATER_0BADFAE10 }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          action: upload
-          app_location: "./Client"
-          api_location: "Api"
-          output_location: "wwwroot"
+          repo_token:            ${{ secrets.GITHUB_TOKEN }}
+          action:               upload
+          app_location:         ./Client
+          api_location:         Api
+          output_location:      wwwroot
+
+      - name: Smoke-test Preview
+        if: github.event_name == 'pull_request'
+        run: curl -sSf ${{ steps.builddeploy.outputs.preview_url }}
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' &&
