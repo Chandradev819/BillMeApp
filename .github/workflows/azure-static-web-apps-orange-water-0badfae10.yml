@@ -35,10 +35,7 @@ jobs:
       - name: Publish Blazor WebAssembly (AOT + Brotli)
         run: |
           dotnet publish ./Client \
-            -c Release \
-            /p:RunAOTCompilation=true \
-            /p:CompressionEnabled=true
-
+            -c Release 
       - name: Build And Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
         with:
