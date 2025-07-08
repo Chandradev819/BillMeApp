@@ -28,8 +28,11 @@ jobs:
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
           restore-keys: ${{ runner.os }}-nuget-
 
-      - name: Publish Blazor WebAssembly (Optional AOT)
-        run: dotnet publish ./Client -c Release
+      - name: Install WASM Tools workload
+        run: dotnet workload install wasm-tools
+
+      - name: Publish Blazor WebAssembly with AOT
+        run: dotnet publish ./Client -c Release /p:RunAOTCompilation=true
 
       - name: Build And Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
