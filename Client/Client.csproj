@@ -18,6 +18,7 @@
     <StripDebugSymbols>true</StripDebugSymbols>
     <DebugType>none</DebugType>
     <CompressionEnabled>true</CompressionEnabled>
+    <BlazorWebAssemblyEnableAOT>false</BlazorWebAssemblyEnableAOT>
   </PropertyGroup>
 
   <ItemGroup>
