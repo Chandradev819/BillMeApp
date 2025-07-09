@@ -47,10 +47,13 @@ jobs:
       - name: Install WASM Tools workload
         run: dotnet workload install wasm-tools
 
-      - name: Publish Blazor WebAssembly (Release with AOT support)
-        run: dotnet publish ./Client -c Release -o build
+      - name: Publish Blazor WebAssembly Client
+        run: dotnet publish ./Client -c Release -o build/client
 
-      - name: List published files (optional)
+      - name: Publish Azure Function API
+        run: dotnet publish ./Api -c Release -o build/api
+
+      - name: List Published Files (optional)
         run: ls -R build
 
       - name: Build and Deploy to Azure Static Web Apps
@@ -59,7 +62,8 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ORANGE_WATER_0BADFAE10 }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: upload
-          app_location: build
+          app_location: build/client
+          api_location: build/api
           output_location: wwwroot
 
   close_pull_request_job:
