@@ -10,65 +10,35 @@ on:
       - main
 
 jobs:
-  build_and_deploy_job:
-    if: github.event_name == 'push' ||
-        (github.event_name == 'pull_request' && github.event.action != 'closed')
+  build_and_deploy:
     runs-on: ubuntu-latest
-    name: Build and Deploy Job
+    name: Build and Deploy Blazor WebAssembly
 
     steps:
-      - name: Checkout repository
+      - name: ⬇️ Checkout Code
         uses: actions/checkout@v3
-        with:
-          submodules: true
-          lfs: false
 
-      - name: Setup .NET SDK
+      - name: 🧰 Setup .NET SDK
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.x'
 
-      - name: Cache NuGet packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-
-      - name: Cache .NET Workload Packs
-        uses: actions/cache@v3
-        with:
-          path: ~/.dotnet
-          key: ${{ runner.os }}-dotnet-workloads-${{ hashFiles('**/*.csproj') }}
-          restore-keys: |
-            ${{ runner.os }}-dotnet-workloads-
-
-      - name: Install WASM Tools workload
+      - name: 🛠️ Install WASM Workload
         run: dotnet workload install wasm-tools
 
-      - name: Publish Blazor WebAssembly (AOT + Brotli)
-        run: dotnet publish ./Client -c Release /p:BlazorWebAssemblyEnableAOT=true /p:CompressionEnabled=true
+      - name: 📦 Build and Publish Blazor WebAssembly
+        run: |
+          dotnet publish ./Client -c Release -o build_output /p:BlazorWebAssemblyEnableAOT=true /p:CompressionEnabled=true
+          mkdir output
+          cp -r build_output/wwwroot/* output/
+          echo "✅ Files copied to output folder:"
+          ls -la output/index.html || echo "❌ index.html is missing!"
 
-      - name: Build and Deploy to Azure Static Web Apps
+      - name: 🚀 Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ORANGE_WATER_0BADFAE10 }}
-          repo_token:                              ${{ secrets.GITHUB_TOKEN }}
-          action:                                  upload
-          app_location:                            ./Client
-          api_location:                            Api
-          output_location:                         wwwroot
-
-  close_pull_request_job:
-    if: github.event_name == 'pull_request' &&
-        github.event.action == 'closed'
-    runs-on: ubuntu-latest
-    name: Close Pull Request Job
-
-    steps:
-      - name: Close Preview
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ORANGE_WATER_0BADFAE10 }}
-          action: close
+          repo_token: ${{ secrets.GITHUB_TOKEN }} # Required for PR status
+          action: upload
+          app_location: output                  # 👉 Points to folder containing index.html
+          skip_app_build: true                  # 👉 Skip Azure's internal Oryx build
