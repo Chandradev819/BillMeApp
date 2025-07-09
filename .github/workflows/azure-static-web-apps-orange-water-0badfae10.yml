@@ -13,7 +13,7 @@ jobs:
   build_and_deploy_job:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
-    name: Build and Deploy Blazor WASM
+    name: Build and Deploy Job
 
     steps:
       - name: Checkout code
@@ -27,12 +27,13 @@ jobs:
       - name: Install WASM tools
         run: dotnet workload install wasm-tools
 
-      - name: Publish Blazor WebAssembly (AOT + Brotli)
+      - name: Publish Blazor WASM with AOT and Brotli
         run: |
-          dotnet publish ./Client -c Release /p:BlazorWebAssemblyEnableAOT=true /p:CompressionEnabled=true
+          dotnet publish ./Client -c Release -o build_output /p:BlazorWebAssemblyEnableAOT=true /p:CompressionEnabled=true
+          ls -la build_output/wwwroot  # just to verify files exist
           mkdir -p output
-          cp -r ./Client/bin/Release/net8.0/publish/wwwroot/* ./output/
-          cp ./Client/staticwebapp.config.json ./output/ || true
+          cp -r build_output/wwwroot/* output/
+          cp ./Client/staticwebapp.config.json output/ || true
 
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
@@ -40,8 +41,8 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ORANGE_WATER_0BADFAE10 }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: upload
-          app_location: .                # disables Oryx detection
-          output_location: output        # this is the exact folder where index.html exists
+          app_location: .                # disables Oryx
+          output_location: output        # contains index.html
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
@@ -49,7 +50,7 @@ jobs:
     name: Close Preview
 
     steps:
-      - name: Close Preview
+      - name: Close Preview Environment
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ORANGE_WATER_0BADFAE10 }}
