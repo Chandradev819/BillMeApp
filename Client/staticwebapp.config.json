@@ -1,9 +1,39 @@
 {
-  "navigationFallback": {
-    "rewrite": "/index.html",
-    "exclude": [ "/api/*" ]
+  "mimeTypes": {
+    ".dll": "application/octet-stream",
+    ".wasm": "application/wasm",
+    ".js": "application/javascript",
+    ".json": "application/json",
+    ".br": "application/octet-stream"
   },
-  "globalHeaders": {
-    "cache-control": "public, max-age=31536000, immutable"
+  "responseOverrides": {
+    "/_framework/*.dll.br": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Encoding": "br",
+        "Content-Type": "application/octet-stream"
+      }
+    },
+    "/_framework/*.wasm.br": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Encoding": "br",
+        "Content-Type": "application/wasm"
+      }
+    },
+    "/_framework/*.js.br": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Encoding": "br",
+        "Content-Type": "application/javascript"
+      }
+    },
+    "/_framework/*.json.br": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Encoding": "br",
+        "Content-Type": "application/json"
+      }
+    }
   }
 }
