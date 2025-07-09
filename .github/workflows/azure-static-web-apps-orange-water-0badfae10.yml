@@ -10,48 +10,35 @@ on:
       - main
 
 jobs:
-  build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+  build_and_deploy:
     runs-on: ubuntu-latest
-    name: Build and Deploy Job
+    name: Build and Deploy Blazor WebAssembly
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup .NET
+      - name: Setup .NET SDK
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.x'
 
-      - name: Install WASM tools
+      - name: Install WASM workload
         run: dotnet workload install wasm-tools
 
-      - name: Publish Blazor WASM with AOT and Brotli
+      - name: Build and Publish
         run: |
           dotnet publish ./Client -c Release -o build_output /p:BlazorWebAssemblyEnableAOT=true /p:CompressionEnabled=true
-          ls -la build_output/wwwroot  # just to verify files exist
-          mkdir -p output
+          mkdir output
           cp -r build_output/wwwroot/* output/
-          cp ./Client/staticwebapp.config.json output/ || true
+          echo "Index files in output:"
+          ls -la output/index.html || echo "index.html missing!"
 
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ORANGE_WATER_0BADFAE10 }}
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: upload
-          app_location: .                # disables Oryx
-          output_location: output        # contains index.html
-
-  close_pull_request_job:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    runs-on: ubuntu-latest
-    name: Close Preview
-
-    steps:
-      - name: Close Preview Environment
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ORANGE_WATER_0BADFAE10 }}
-          action: close
+          app_location: .                # prevents Oryx from building
+          output_location: output        # points to built index.html
