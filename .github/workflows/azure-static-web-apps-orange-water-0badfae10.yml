@@ -31,6 +31,7 @@ jobs:
           dotnet publish ./Client -c Release -o build_output /p:BlazorWebAssemblyEnableAOT=true /p:CompressionEnabled=true
           mkdir output
           cp -r build_output/wwwroot/* output/
+          cp ./Client/wwwroot/staticwebapp.config.json output/
           echo "✅ Published output copied to output/"
 
       - name: 🚀 Deploy to Azure Static Web Apps
