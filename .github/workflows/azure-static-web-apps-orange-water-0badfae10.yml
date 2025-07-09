@@ -15,31 +15,30 @@ jobs:
     name: Build and Deploy Blazor WebAssembly
 
     steps:
-      - name: 📥 Checkout code
+      - name: ⬇️ Checkout Code
         uses: actions/checkout@v3
 
-      - name: ⚙️ Setup .NET SDK
+      - name: 🧰 Setup .NET SDK
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.x'
 
-      - name: 🛠️ Install WASM tools
+      - name: 🛠️ Install WASM Workload
         run: dotnet workload install wasm-tools
 
-      - name: 🏗️ Build and Publish Blazor WebAssembly
+      - name: 📦 Build and Publish Blazor WebAssembly
         run: |
           dotnet publish ./Client -c Release -o build_output /p:BlazorWebAssemblyEnableAOT=true /p:CompressionEnabled=true
           mkdir output
           cp -r build_output/wwwroot/* output/
-          echo "✅ Contents of output directory:"
-          ls -la output
+          echo "✅ Files copied to output folder:"
+          ls -la output/index.html || echo "❌ index.html is missing!"
 
       - name: 🚀 Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ORANGE_WATER_0BADFAE10 }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }} # Required for PR status
           action: upload
-          app_location: .                     # Points to root (required but irrelevant when build is skipped)
-          output_location: output             # This folder contains your index.html
-          skip_app_build: true                # ✅ This tells Azure to skip Oryx build
+          app_location: output                  # 👉 Points to folder containing index.html
+          skip_app_build: true                  # 👉 Skip Azure's internal Oryx build
