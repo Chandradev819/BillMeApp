@@ -1,13 +1,5 @@
 {
-  "$schema": "https://aka.ms/swa/v2/schemas/staticwebapp.config.json",
-
-  "mimeTypes": {
-    ".br": "application/octet-stream"
-  },
-
   "navigationFallback": {
-    "rewrite": "index.html",
-    "exclude": [ "/_framework/*", "/api/*" ]
+    "rewrite": "/index.html"
   }
-
 }
