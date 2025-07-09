@@ -18,8 +18,10 @@
     <StripDebugSymbols>true</StripDebugSymbols>
     <DebugType>none</DebugType>
     <CompressionEnabled>true</CompressionEnabled>
-    <BlazorWebAssemblyEnableAOT>false</BlazorWebAssemblyEnableAOT>
+    <BlazorWebAssemblyEnableAOT>true</BlazorWebAssemblyEnableAOT>
+    <BlazorWebAssemblyLazyLoadAssemblies>true</BlazorWebAssemblyLazyLoadAssemblies>
   </PropertyGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.0" />
