@@ -1,4 +1,7 @@
 {
+  "navigationFallback": {
+    "rewrite": "/index.html"
+  },
   "mimeTypes": {
     ".dll": "application/octet-stream",
     ".wasm": "application/wasm",
