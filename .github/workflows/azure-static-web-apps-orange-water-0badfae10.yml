@@ -48,7 +48,7 @@ jobs:
         run: dotnet workload install wasm-tools
 
       - name: Publish Blazor WebAssembly (AOT + Brotli)
-        run: dotnet publish ./Client -c Release /p:BlazorWebAssemblyEnableAOT=false /p:CompressionEnabled=true
+        run: dotnet publish ./Client -c Release /p:BlazorWebAssemblyEnableAOT=true /p:CompressionEnabled=true
 
       - name: Build and Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
