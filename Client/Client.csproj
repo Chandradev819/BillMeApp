@@ -7,7 +7,7 @@
     <RootNamespace>BlazorApp.Client</RootNamespace>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+  <!--<PropertyGroup Condition="'$(Configuration)'=='Release'">
     <PublishTrimmed>true</PublishTrimmed>
     <TrimMode>link</TrimMode>
     <EnableAnalyzer>true</EnableAnalyzer>
@@ -20,7 +20,7 @@
     <CompressionEnabled>true</CompressionEnabled>
     <BlazorWebAssemblyEnableAOT>true</BlazorWebAssemblyEnableAOT>
     <BlazorWebAssemblyLazyLoadAssemblies>true</BlazorWebAssemblyLazyLoadAssemblies>
-  </PropertyGroup>
+  </PropertyGroup>-->
 
 
   <ItemGroup>
