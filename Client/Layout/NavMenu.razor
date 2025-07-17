@@ -1,39 +1,92 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">Static Web Apps</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-</div>
+﻿@inject IAzureStaticWebAppNavigationService _azureStaticWebAppNavigationService;
 
-<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+<nav class="navbar is-white" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <NavLink href="/" class="navbar-item is-size-4">
+            BlazorWebAssembly
+        </NavLink>
+
+
+        <a @onclick="@ToggleBurger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+
+    <hr class="navbar-divider" />
+
+
+    <div class="@NavBarMenuClass">
+        <div class="navbar-start">
+            <NavLink href="providers" class="navbar-item">
+                <span class="icon-text has-text-dark">
+                    <span class="icon">
+                        <i class="fa fa-sign-in-alt"></i>
+                    </span>
+                    <span>Login Providers</span>
+                </span>
             </NavLink>
+            <AuthorizeView>
+                <Authorized>
+                    <NavLink href="cascadinguserinfo" class="navbar-item">
+                        <span class="icon-text has-text-dark">
+                            <span class="icon">
+                                <i class="fa fa-user"></i>
+                            </span>
+                            <span>Cascading User Info</span>
+                        </span>
+                    </NavLink>
+
+                    <NavLink href="azurestaticwebappsuserinfo" class="navbar-item">
+                        <span class="icon-text has-text-dark">
+                            <span class="icon">
+                                <i class="fa fa-user-circle"></i>
+                            </span>
+                            <span>Azure Static Web Apps User Info</span>
+                        </span>
+                    </NavLink>
+
+                    <NavLink href="@_azureStaticWebAppNavigationService.Logout().ToString()" class="navbar-item">
+                        <span class="icon-text has-text-dark">
+                            <span class="icon">
+                                <i class="fa fa-sign-out-alt"></i>
+                            </span>
+                            <span>Logout</span>
+                        </span>
+                    </NavLink>
+
+                </Authorized>
+            </AuthorizeView>
         </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
+
+        <div class="navbar-end">
+            <div class="navbar-item">
+                <a href="https://github.com/mumby0168">
+                    <span class="icon-text has-text-dark">
+                        <span class="icon">
+                            <i class="fab fa-github"></i>
+                        </span>
+                        <span>GitHub</span>
+                    </span>
+                </a>
+            </div>
         </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
-    </nav>
-</div>
+
+    </div>
+</nav>
+
+<hr style="border-bottom: 1px solid #363636; margin: 0; opacity: 0.2" />
 
 @code {
-    private bool collapseNavMenu = true;
 
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-    private void ToggleNavMenu()
+    void ToggleBurger()
     {
-        collapseNavMenu = !collapseNavMenu;
+        IsMenuVisible = !IsMenuVisible;
     }
+
+    bool IsMenuVisible { get; set; }
+
+    string NavBarMenuClass => IsMenuVisible ? "navbar-menu is-active" : "navbar-menu";
+
 }
